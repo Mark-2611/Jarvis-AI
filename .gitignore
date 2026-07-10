@@ -1,0 +1,19 @@
+# Virtual Environment
+.venv/
+
+# Environment Variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Temporary files
+temp.wav
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

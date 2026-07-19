@@ -6,15 +6,8 @@ def route(command):
     command = command.lower().strip()
 
     # -----------------------------
-    # Normalize speech variations
-    # -----------------------------
-    command = re.sub(r"person\s+(one|won|on)", "person 1", command)
-    command = re.sub(r"mark\s+(one|won|on)", "mark 1", command)
-
-    # =====================================================
     # Exit
-    # =====================================================
-
+    # -----------------------------
     if command in [
         "exit",
         "quit",
@@ -25,22 +18,20 @@ def route(command):
             "action": "exit"
         }
 
-    # =====================================================
+    # -----------------------------
     # Time
-    # =====================================================
-
+    # -----------------------------
     if "time" in command:
         return {
             "action": "time"
         }
 
-    # =====================================================
+    # -----------------------------
     # Dictation
-    # =====================================================
-
+    # -----------------------------
     if command in [
-        "dictation",
         "start dictation",
+        "dictation",
         "dictate",
         "start writing"
     ]:
@@ -48,10 +39,9 @@ def route(command):
             "action": "dictation"
         }
 
-    # =====================================================
+    # -----------------------------
     # Remember
-    # =====================================================
-
+    # -----------------------------
     match = re.search(
         r"remember my (.+?) is (.+)",
         command
@@ -64,10 +54,9 @@ def route(command):
             "value": match.group(2).strip()
         }
 
-    # =====================================================
+    # -----------------------------
     # Recall
-    # =====================================================
-
+    # -----------------------------
     match = re.search(
         r"(what is|what's|whats) my (.+)",
         command
@@ -79,10 +68,9 @@ def route(command):
             "key": match.group(2).strip()
         }
 
-    # =====================================================
+    # -----------------------------
     # Forget
-    # =====================================================
-
+    # -----------------------------
     match = re.search(
         r"forget my (.+)",
         command
@@ -95,11 +83,10 @@ def route(command):
         }
 
     # =====================================================
-    # Chrome Profile
+    # Chrome Profile Commands
     # =====================================================
 
-    # Open Mark 1 Chrome
-    # Open Person 1 Chrome
+    # Open profile
 
     match = re.match(
         r"open (mark 1|person 1) chrome",
@@ -112,46 +99,12 @@ def route(command):
             "profile": match.group(1)
         }
 
-    # =====================================================
-    # Google Search In Profile
-    # =====================================================
+    # Open website in profile
 
     match = re.match(
-        r"search google for (.+) in (mark 1|person 1)",
+        r"open (.+) in (mark 1|person 1) chrome",
         command
     )
-
-    if match:
-        return {
-            "action": "profile_google_search",
-            "target": match.group(1).strip(),
-            "profile": match.group(2).strip()
-        }
-
-    # =====================================================
-    # YouTube Search In Profile
-    # =====================================================
-
-    match = re.match(
-        r"search youtube for (.+) in (mark 1|person 1)",
-        command
-    )
-
-    if match:
-        return {
-            "action": "profile_youtube_search",
-            "target": match.group(1).strip(),
-            "profile": match.group(2).strip()
-        }
-
-    # =====================================================
-    # Open Website In Profile
-    # =====================================================
-
-    match = re.match(
-    r"open (.+?) in (mark 1|person 1)(?: chrome)?$",
-    command
-    )   
 
     if match:
         return {
@@ -160,12 +113,24 @@ def route(command):
             "profile": match.group(2).strip()
         }
 
-    # =====================================================
+    # Search in profile
+
+    match = re.match(
+        r"search (.+) in (mark 1|person 1) chrome",
+        command
+    )
+
+    if match:
+        return {
+            "action": "profile_search",
+            "target": match.group(1).strip(),
+            "profile": match.group(2).strip()
+        }
+
+    # -----------------------------
     # Google Search
-    # =====================================================
-
+    # -----------------------------
     if command.startswith("search google for"):
-
         return {
             "action": "google_search",
             "target": command.replace(
@@ -174,12 +139,10 @@ def route(command):
             ).strip()
         }
 
-    # =====================================================
+    # -----------------------------
     # YouTube Search
-    # =====================================================
-
+    # -----------------------------
     if command.startswith("search youtube for"):
-
         return {
             "action": "youtube_search",
             "target": command.replace(
@@ -188,10 +151,9 @@ def route(command):
             ).strip()
         }
 
-    # =====================================================
-    # Open Website / App
-    # =====================================================
-
+    # -----------------------------
+    # Open Website / Application
+    # -----------------------------
     if command.startswith("open "):
 
         item = command.replace(
@@ -210,13 +172,9 @@ def route(command):
             "facebook",
             "linkedin",
             "twitter",
-            "x",
             "amazon",
             "netflix",
-            "whatsapp",
-            "spotify",
-            "reddit",
-            "stackoverflow"
+            "whatsapp"
         ]
 
         if item in websites:
@@ -230,10 +188,9 @@ def route(command):
             "target": item
         }
 
-    # =====================================================
-    # AI Chat
-    # =====================================================
-
+    # -----------------------------
+    # AI Fallback
+    # -----------------------------
     return {
         "action": "chat",
         "target": command

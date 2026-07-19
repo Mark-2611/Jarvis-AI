@@ -19,3 +19,6 @@ temp.wav
 Thumbs.db
 
 tempCodeRunnerFile.py
+
+__pycache__/
+*.py[cod]

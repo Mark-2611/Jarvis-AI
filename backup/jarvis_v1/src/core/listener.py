@@ -4,7 +4,7 @@ recognizer = sr.Recognizer()
 
 # Configure once
 recognizer.dynamic_energy_threshold = True
-recognizer.pause_threshold = 1.5
+recognizer.pause_threshold = 0.8
 recognizer.non_speaking_duration = 0.5
 
 # Calibrate only once
@@ -38,7 +38,7 @@ def listen():
             audio = recognizer.listen(
                 source,
                 timeout=10,
-                phrase_time_limit=20
+                phrase_time_limit=10
             )
 
             print("🧠 Recognizing...")
@@ -52,17 +52,11 @@ def listen():
 
             # Normalize common phrases
             replacements = {
-    "vs code": "vscode",
-    "visual studio": "visual studio code",
-    "git hub": "github",
-    "chat gp": "chatgpt",
-
-    "mark one": "mark 1",
-    "person one": "person 1",
-    "person on": "person 1",
-    "mark on": "mark 1",
-    "profile one": "profile 1",
-}
+                "vs code": "vscode",
+                "visual studio": "visual studio code",
+                "git hub": "github",
+                "chat gp": "chatgpt",
+            }
 
             for old, new in replacements.items():
                 command = command.replace(old, new)

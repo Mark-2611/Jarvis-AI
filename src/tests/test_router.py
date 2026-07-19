@@ -3,7 +3,7 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from skills.router import route_command
+from services.router import route_command
 
 print("=" * 40)
 print("     JARVIS ROUTER TEST")

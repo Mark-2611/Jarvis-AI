@@ -79,7 +79,8 @@ def search_youtube(query):
 # --------------------------------------------------
 
 def open_chrome_profile(profile):
-
+    print("Requested profile:", profile)
+    print("Chrome profile folder:", CHROME_PROFILES[profile])
     profile = profile.lower()
 
     if profile not in CHROME_PROFILES:

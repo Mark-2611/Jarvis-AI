@@ -8,8 +8,18 @@ def route(command):
     # -----------------------------
     # Normalize speech variations
     # -----------------------------
-    command = re.sub(r"person\s+(one|won|on)", "person 1", command)
-    command = re.sub(r"mark\s+(one|won|on)", "mark 1", command)
+
+    command = re.sub(
+        r"person\s+(one|won|on)",
+        "person 1",
+        command
+    )
+
+    command = re.sub(
+        r"mark\s+(one|won|on)",
+        "mark 1",
+        command
+    )
 
     # =====================================================
     # Exit
@@ -95,14 +105,11 @@ def route(command):
         }
 
     # =====================================================
-    # Chrome Profile
+    # Chrome Profile - Direct Open
     # =====================================================
 
-    # Open Mark 1 Chrome
-    # Open Person 1 Chrome
-
     match = re.match(
-        r"open (mark 1|person 1) chrome",
+        r"open (mark 1|person 1) chrome$",
         command
     )
 
@@ -110,6 +117,20 @@ def route(command):
         return {
             "action": "profile_open",
             "profile": match.group(1)
+        }
+
+    # =====================================================
+    # Chrome - Choose Profile
+    # =====================================================
+
+    if command in [
+        "open chrome",
+        "open google chrome",
+        "launch chrome",
+        "launch google chrome"
+    ]:
+        return {
+            "action": "chrome_choose_profile"
         }
 
     # =====================================================
@@ -149,9 +170,9 @@ def route(command):
     # =====================================================
 
     match = re.match(
-    r"open (.+?) in (mark 1|person 1)(?: chrome)?$",
-    command
-    )   
+        r"open (.+?) in (mark 1|person 1)(?: chrome)?$",
+        command
+    )
 
     if match:
         return {
@@ -170,7 +191,8 @@ def route(command):
             "action": "google_search",
             "target": command.replace(
                 "search google for",
-                ""
+                "",
+                1
             ).strip()
         }
 
@@ -184,19 +206,153 @@ def route(command):
             "action": "youtube_search",
             "target": command.replace(
                 "search youtube for",
-                ""
+                "",
+                1
             ).strip()
         }
 
     # =====================================================
-    # Open Website / App
+    # Open Recycle Bin
+    # =====================================================
+
+    if command in [
+        "open recycle bin",
+        "open recyclebin",
+        "open trash",
+        "open bin"
+    ]:
+        return {
+            "action": "open_recycle_bin"
+        }
+
+    # =====================================================
+    # Open Known Folder
+    # =====================================================
+
+    # IMPORTANT:
+    # Do NOT use .+ here.
+    #
+    # Otherwise:
+    # open chrome
+    # open notepad
+    #
+    # would become open_folder.
+
+    match = re.match(
+        r"open (desktop|documents|downloads|pictures|music|videos)$",
+        command
+    )
+
+    if match:
+
+        return {
+            "action": "open_folder",
+            "target": match.group(1).strip()
+        }
+
+    # =====================================================
+    # Create Folder
+    # =====================================================
+
+    match = re.match(
+        r"(?:create|make)\s+(?:a\s+)?folder"
+        r"(?:\s+(?:called|named|name))?\s+(.+)",
+        command
+    )
+
+    if match:
+
+        return {
+            "action": "create_folder",
+            "target": match.group(1).strip()
+        }
+
+    # =====================================================
+    # Create File
+    # =====================================================
+
+    match = re.match(
+        r"(?:create|make)\s+(?:a\s+)?file"
+        r"(?:\s+(?:called|named|name))?\s+(.+)",
+        command
+    )
+
+    if match:
+
+        return {
+            "action": "create_file",
+            "target": match.group(1).strip()
+        }
+
+    # =====================================================
+    # Rename
+    # =====================================================
+
+    match = re.match(
+        r"rename (?:file|folder)?\s*(.+?)\s+to\s+(.+)",
+        command
+    )
+
+    if match:
+
+        return {
+            "action": "rename",
+            "old_name": match.group(1).strip(),
+            "new_name": match.group(2).strip()
+        }
+
+    # =====================================================
+    # Delete Folder
+    # =====================================================
+
+    match = re.match(
+        r"(?:delete|remove)\s+"
+        r"(?:the\s+)?"
+        r"(?:a\s+)?"
+        r"folder\s+"
+        r"(?:(?:called|named|name)\s+)?"
+        r"(.+)",
+        command
+    )
+
+    if match:
+
+        return {
+            "action": "delete_folder",
+            "target": match.group(1).strip()
+        }
+
+    # =====================================================
+    # Delete File
+    # =====================================================
+
+    match = re.match(
+        r"(?:delete|remove)\s+"
+        r"(?:the\s+)?"
+        r"(?:a\s+)?"
+        r"file\s+"
+        r"(?:(?:called|named|name)\s+)?"
+        r"(.+)",
+        command
+    )
+
+    if match:
+
+        return {
+            "action": "delete_file",
+            "target": match.group(1).strip()
+        }
+
+    # =====================================================
+    # Open Website / Application
     # =====================================================
 
     if command.startswith("open "):
 
         item = command.replace(
             "open ",
-            ""
+            "",
+            1
         ).strip()
 
         websites = [
@@ -220,10 +376,14 @@ def route(command):
         ]
 
         if item in websites:
+
             return {
                 "action": "open_website",
                 "target": item
             }
+
+        # Anything else after "open"
+        # is treated as an application.
 
         return {
             "action": "open_app",

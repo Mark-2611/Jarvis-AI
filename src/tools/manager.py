@@ -1,3 +1,5 @@
+from tools.file_tool import FileTool
+
 from .browser_tool import BrowserTool
 from .system_tool import SystemTool
 from .memory_tool import MemoryTool
@@ -12,7 +14,8 @@ class ToolManager:
             BrowserTool(),
             SystemTool(),
             MemoryTool(),
-            ChatTool()
+            ChatTool(),
+            FileTool()
         ]
 
     def execute(self, action, data):
